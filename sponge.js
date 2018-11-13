@@ -15,10 +15,10 @@ window.addEventListener('DOMContentLoaded', function(){
         var multimat = new BABYLON.MultiMaterial('multi', scene);
 
         // create a FreeCamera, and set its position to (x:0, y:5, z:-10)
-        var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 700, -1000), scene);
+        var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 70, -100), scene);
 
         // target the camera to scene origin
-        camera.setTarget(new BABYLON.Vector3(0,150,0));
+        camera.setTarget(new BABYLON.Vector3(0,15,0));
 
         // attach the camera to the canvas
         camera.attachControl(canvas, false);
@@ -43,9 +43,9 @@ window.addEventListener('DOMContentLoaded', function(){
         // var greenMat = new BABYLON.StandardMaterial("green", scene);
         // greenMat.diffuseColor = BABYLON.Color3.Blue();
 
-        var mat1 = new BABYLON.StandardMaterial("mat1", scene);
+        // var mat1 = new BABYLON.StandardMaterial("mat1", scene);
 
-        // let finalSponge = buildSpongePlanes(scene, meshes, multimat);
+        buildMats(scene);
         buildSpongePlanes(scene, meshes, multimat);
         
         // finalSponge.material = multimat;
@@ -58,7 +58,7 @@ window.addEventListener('DOMContentLoaded', function(){
         
         var convertToFlat = function () {
             for (var index = 0; index < scene.textures.length; index++) {
-                scene.textures[index].updateSamplingMode(BABYLON.Texture.NEAREST_SAMPLINGMODE);
+                scene.textures[index].updateSamplingMode(BABYLON.Texture.NEAREST_LINEAR);
             }
         }
         
@@ -89,48 +89,57 @@ window.addEventListener('DOMContentLoaded', function(){
     });
 });
 
+let mats = [];
+
+function buildMats(scene){
+    for (let m = 0; m < 8; m++){
+        let myMaterial = new BABYLON.StandardMaterial(`material${m}`, scene);
+        myMaterial.diffuseTexture = new BABYLON.Texture(`./${m}.png`, scene);
+        myMaterial.backFaceCulling = false;
+        myMaterial.diffuseTexture.hasAlpha = true;    
+        mats.push(myMaterial)
+    }
+    console.log(mats)
+}
+
+
 function buildSpongePlanes(scene, meshes, multimat){
 
-    textureMapping = [1,1,1,1,2,2,1,1,1,
-                      1,3,3,3,4,4,3,3,3,
-                      1,1,1,1,2,2,1,1,1,
-                      1,5,5,5,6,6,5,5,5,
-                      5,7,7,7,8]
+    // map each plane to the correct texture
+    planeMapping = [0,0,0,0,1,1,0,0,0,
+                    0,2,2,2,3,3,2,2,2,
+                    0,0,0,0,1,1,0,0,0,
+                    0,4,4,4,5,5,4,4,4,
+                    4,6,6,6,7]
 
     for (let i = 0; i <= 81; i++){
 
-        let myMaterial = new BABYLON.StandardMaterial("myMaterial"+i, scene);
-        if (i <= 40)    myMaterial.diffuseTexture = new BABYLON.Texture(`./${textureMapping[i]}.png`, scene);
-        else            myMaterial.diffuseTexture = new BABYLON.Texture(`./${textureMapping[81-i]}.png`, scene);
-        myMaterial.backFaceCulling = false;
-        myMaterial.diffuseTexture.hasAlpha = true;    
-        myMaterial.name = `material${i}`;  
-        multimat.subMaterials.push(myMaterial);
-
+        var myMaterial;
         
-        let myXPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: 810, height: 810}, scene);
+        if (i <= 40)
+            myMaterial = mats[planeMapping[i]];
+        else
+            myMaterial = mats[planeMapping[81-i]];
+        
+        let myXPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: 81, height: 81}, scene);
         myXPlane.material = myMaterial;        
         myXPlane.rotation.y = Math.PI/2;
-        myXPlane.position = new BABYLON.Vector3(i*10-405, 0, 405);
+        myXPlane.position = new BABYLON.Vector3(i-40.5, 0, 40.5);
         myXPlane.name = `xPlane${i}`;
         meshes.push(myXPlane);  
 
-        let myYPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: 810, height: 810}, scene);
+        let myYPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: 81, height: 81}, scene);
         myYPlane.material = myMaterial;        
         myYPlane.rotation.x = Math.PI/2;
-        myYPlane.position = new BABYLON.Vector3(0, i*10-405, 405);
+        myYPlane.position = new BABYLON.Vector3(0, i-40.5, 40.5);
         myYPlane.name = `yPlane${i}`;
         meshes.push(myYPlane);  
 
-        let myZPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: 810, height: 810}, scene);
+        let myZPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: 81, height: 81}, scene);
         myZPlane.material = myMaterial;
-        myZPlane.position = new BABYLON.Vector3(0, 0, i*10);
+        myZPlane.position = new BABYLON.Vector3(0, 0, i);
         myZPlane.name = `zPlane${i}`;
         meshes.push(myZPlane);  
 
     }
-
-    //  let finalSponge = BABYLON.Mesh.MergeMeshes(meshes, true, true, undefined, true);
-    //  return finalSponge;
-
 }
