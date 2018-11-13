@@ -2,6 +2,7 @@ var res = [ 3, 9, 27, 81, 243, 729, 2187, 6561, 19683, 59049 ];
 var maxInterval = 4;
 var width = res[maxInterval-1];  //  L4 needs 55 pixels
 var scale = 5;
+var neededPlanes = [0,3,9,12,27,30,36,39]
 
 canvas1 = document.createElement("canvas");
 canvas1.width = canvas1.height = width;
@@ -48,24 +49,28 @@ function pokeHoles(x1,y1,x2,y2,interval){
 
 // use the Sierpinski carpet to generate the 3D planes of a Menger sponge
 function calculateSpongePlanes(){
-    // for (let z = 0; z < Math.round(width/2); z++) {
-    for (let z = 0; z < width; z++) {
+    for (let zindex = 0; zindex < neededPlanes.length; zindex++) {
+    // for (let z = 0; z < width; z++) {
         let currentCanvas = document.createElement("canvas");
         currentCanvas.width = currentCanvas.height = width*scale;
-        currentCanvas.id = "canvas"+z;
+        currentCanvas.id = "canvas"+neededPlanes[zindex];
 
         document.body.appendChild(currentCanvas);
 
-        // "a", id: "saveButton", events:[{type: "click", fn: saveSprite}], innerText: "Download Sprite", classes: ["button"]}));
-
         let currentCtx = currentCanvas.getContext("2d");
         currentCtx.fillStyle = "#FFFFFF";
+        currentCtx.globalAlpha = 0.0;
+        currentCtx.fillRect( 0, 0, width*scale, width*scale );
+
+
+        currentCtx.globalAlpha = 1.0;
+
 
         for (let x = 0; x < width; x++) 
         for (let y = 0; y < width; y++) {
             let pixelData1=ctx1.getImageData(x,y,1,1);
-            let pixelData2=ctx1.getImageData(x,z,1,1);
-            let pixelData3=ctx1.getImageData(z,y,1,1);
+            let pixelData2=ctx1.getImageData(x,neededPlanes[zindex],1,1);
+            let pixelData3=ctx1.getImageData(neededPlanes[zindex],y,1,1);
             if ( !(pixelData1.data[0] || pixelData2.data[0] || pixelData3.data[0]) ) {
                 currentCtx.fillRect( x*scale, y*scale, scale, scale );
             }

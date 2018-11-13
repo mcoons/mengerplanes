@@ -1,104 +1,107 @@
-
-
 window.addEventListener('DOMContentLoaded', function(){
-            var meshes = [];
-            
+        
+    // get the canvas DOM element
+    var canvas = document.getElementById('renderCanvas');
+    
+    // load the 3D engine
+    var engine = new BABYLON.Engine(canvas, true);
+    
+    // createScene function that creates and return the scene
+    var createScene = function(){
+        var meshes = [];
+        // create a basic BJS Scene object
+        var scene = new BABYLON.Scene(engine);
 
-            // get the canvas DOM element
-            var canvas = document.getElementById('renderCanvas');
+        var multimat = new BABYLON.MultiMaterial('multi', scene);
 
-            // load the 3D engine
-            var engine = new BABYLON.Engine(canvas, true);
+        // create a FreeCamera, and set its position to (x:0, y:5, z:-10)
+        var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 700, -1000), scene);
 
-            // createScene function that creates and return the scene
-            var createScene = function(){
-                // create a basic BJS Scene object
-                var scene = new BABYLON.Scene(engine);
+        // target the camera to scene origin
+        camera.setTarget(new BABYLON.Vector3(0,150,0));
 
-                var multimat = new BABYLON.MultiMaterial('multi', scene);
+        // attach the camera to the canvas
+        camera.attachControl(canvas, false);
 
-                // create a FreeCamera, and set its position to (x:0, y:5, z:-10)
-                var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 700, -1000), scene);
+        // create basic lights, aiming 0,1,0 - meaning, to the sky
+        var hlight3 = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,1,1), scene);
 
-                // target the camera to scene origin
-                camera.setTarget(new BABYLON.Vector3(0,150,0));
+        hlight3.intensity = .3;
 
-                // attach the camera to the canvas
-                camera.attachControl(canvas, false);
+        var plight1 = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(5600, 600, 5600), scene);
+        var plight2 = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(-5600, -5600, -5600), scene);
+        var plight3 = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(5600, 5600, 0), scene);
 
-                // create basic lights, aiming 0,1,0 - meaning, to the sky
-                var hlight3 = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,1,1), scene);
+        plight1.intensity = .5;
+        plight2.intensity = .4;
+        plight3.intensity = .3;
 
-                hlight3.intensity = .3;
+        plight1.diffuse = new BABYLON.Color3(1, .5, .5);
+        plight2.diffuse = new BABYLON.Color3(.5, 1, .5);
+        plight3.diffuse = new BABYLON.Color3(.2, .2, 1);
 
-                var plight1 = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(5600, 600, 5600), scene);
-                var plight2 = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(-5600, -5600, -5600), scene);
-                var plight3 = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(5600, 5600, 0), scene);
+        // var greenMat = new BABYLON.StandardMaterial("green", scene);
+        // greenMat.diffuseColor = BABYLON.Color3.Blue();
 
-                plight1.intensity = .5;
-                plight2.intensity = .4;
-                plight3.intensity = .3;
+        var mat1 = new BABYLON.StandardMaterial("mat1", scene);
 
-                plight1.diffuse = new BABYLON.Color3(1, .5, .5);
-                plight2.diffuse = new BABYLON.Color3(.5, 1, .5);
-                plight3.diffuse = new BABYLON.Color3(.2, .2, 1);
+        // let finalSponge = buildSpongePlanes(scene, meshes, multimat);
+        buildSpongePlanes(scene, meshes, multimat);
+        
+        // finalSponge.material = multimat;
+        // for (let index = 0; index < finalSponge.subMeshes.length/3; index++) {
+        //     finalSponge.subMeshes[index].materialIndex = index;
+        //     finalSponge.subMeshes[index+finalSponge.subMeshes.length/3].materialIndex = index;
+        //     finalSponge.subMeshes[index+finalSponge.subMeshes.length/3+finalSponge.subMeshes.length/3].materialIndex = index;
+        // }
 
-                var greenMat = new BABYLON.StandardMaterial("green", scene);
-                greenMat.diffuseColor = BABYLON.Color3.Blue();
-
-                var mat1 = new BABYLON.StandardMaterial("mat1", scene);
-
-                // let finalSponge = buildSpongePlanes(scene, meshes, multimat);
-                buildSpongePlanes(scene, meshes, multimat);
-                
-                // finalSponge.material = multimat;
-                // for (let index = 0; index < finalSponge.subMeshes.length/3; index++) {
-                //     finalSponge.subMeshes[index].materialIndex = index;
-                //     finalSponge.subMeshes[index+finalSponge.subMeshes.length/3].materialIndex = index;
-                //     finalSponge.subMeshes[index+finalSponge.subMeshes.length/3+finalSponge.subMeshes.length/3].materialIndex = index;
-                // }
-
-                
-                var convertToFlat = function () {
-                    for (var index = 0; index < scene.textures.length; index++) {
-                        scene.textures[index].updateSamplingMode(BABYLON.Texture.NEAREST_SAMPLINGMODE);
-                    }
-                }
-                
-                console.log(scene);
-                // console.log(finalSponge);
-
-                scene.executeWhenReady(function() {
-                    convertToFlat();
-                });
-            
-                // return the created scene
-                return scene;
+        
+        var convertToFlat = function () {
+            for (var index = 0; index < scene.textures.length; index++) {
+                scene.textures[index].updateSamplingMode(BABYLON.Texture.NEAREST_SAMPLINGMODE);
             }
+        }
+        
+        // console.log(scene);
+        // console.log(finalSponge);
 
-            // call the createScene function
-            var scene = createScene();
-
-            // run the render loop
-            engine.runRenderLoop(function(){
-                scene.render();
-                // console.log("indices:", scene.getActiveIndices())
-                // console.log("meshes:", scene.getActiveMeshes())
-            });
-
-            // the canvas/window resize event handler
-            window.addEventListener('resize', function(){
-                engine.resize();
-            });
+        scene.executeWhenReady(function() {
+            convertToFlat();
         });
+    
+        // return the created scene
+        return scene;
+    }
+
+    // call the createScene function
+    var scene = createScene();
+
+    // run the render loop
+    engine.runRenderLoop(function(){
+        scene.render();
+        // console.log("indices:", scene.getActiveIndices())
+        // console.log("meshes:", scene.getActiveMeshes())
+    });
+
+    // the canvas/window resize event handler
+    window.addEventListener('resize', function(){
+        engine.resize();
+    });
+});
 
 function buildSpongePlanes(scene, meshes, multimat){
+
+    textureMapping = [1,1,1,1,2,2,1,1,1,
+                      1,3,3,3,4,4,3,3,3,
+                      1,1,1,1,2,2,1,1,1,
+                      1,5,5,5,6,6,5,5,5,
+                      5,7,7,7,8]
 
     for (let i = 0; i <= 81; i++){
 
         let myMaterial = new BABYLON.StandardMaterial("myMaterial"+i, scene);
-        if (i <= 40)    myMaterial.diffuseTexture = new BABYLON.Texture(`./${i+1}.png`, scene);
-        else            myMaterial.diffuseTexture = new BABYLON.Texture(`./${81-i+1}.png`, scene);
+        if (i <= 40)    myMaterial.diffuseTexture = new BABYLON.Texture(`./${textureMapping[i]}.png`, scene);
+        else            myMaterial.diffuseTexture = new BABYLON.Texture(`./${textureMapping[81-i]}.png`, scene);
         myMaterial.backFaceCulling = false;
         myMaterial.diffuseTexture.hasAlpha = true;    
         myMaterial.name = `material${i}`;  
