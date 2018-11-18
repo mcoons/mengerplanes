@@ -1,3 +1,6 @@
+// This script will create an L4 menger sponge using planes to optimize the scene
+// It quickly generates an L4 Menger sponge using only 984 vertices!!!! 
+
 window.addEventListener('DOMContentLoaded', function(){
         
     // get the canvas DOM element
@@ -40,30 +43,14 @@ window.addEventListener('DOMContentLoaded', function(){
         plight2.diffuse = new BABYLON.Color3(.5, 1, .5);
         plight3.diffuse = new BABYLON.Color3(.2, .2, 1);
 
-        // var greenMat = new BABYLON.StandardMaterial("green", scene);
-        // greenMat.diffuseColor = BABYLON.Color3.Blue();
-
-        // var mat1 = new BABYLON.StandardMaterial("mat1", scene);
-
         buildMats(scene);
         buildSpongePlanes(scene, meshes, multimat);
-        
-        // finalSponge.material = multimat;
-        // for (let index = 0; index < finalSponge.subMeshes.length/3; index++) {
-        //     finalSponge.subMeshes[index].materialIndex = index;
-        //     finalSponge.subMeshes[index+finalSponge.subMeshes.length/3].materialIndex = index;
-        //     finalSponge.subMeshes[index+finalSponge.subMeshes.length/3+finalSponge.subMeshes.length/3].materialIndex = index;
-        // }
 
-        
         var convertToFlat = function () {
             for (var index = 0; index < scene.textures.length; index++) {
                 scene.textures[index].updateSamplingMode(BABYLON.Texture.NEAREST_LINEAR);
             }
         }
-        
-        // console.log(scene);
-        // console.log(finalSponge);
 
         scene.executeWhenReady(function() {
             convertToFlat();
@@ -79,8 +66,8 @@ window.addEventListener('DOMContentLoaded', function(){
     // run the render loop
     engine.runRenderLoop(function(){
         scene.render();
-        // console.log("indices:", scene.getActiveIndices())
-        // console.log("meshes:", scene.getActiveMeshes())
+        console.log("indices:", scene.getActiveIndices())
+        console.log("meshes:", scene.getActiveMeshes())
     });
 
     // the canvas/window resize event handler
@@ -116,6 +103,7 @@ function buildSpongePlanes(scene, meshes, multimat){
 
         var myMaterial;
         
+        // the planes are mirrored around the center
         if (i <= 40)
             myMaterial = mats[planeMapping[i]];
         else

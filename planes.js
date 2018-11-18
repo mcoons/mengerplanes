@@ -1,7 +1,12 @@
+// This is used to generate the initial planes used for the sponge script
+// It currently calculates the planes needed for an L4 sponge
+
 var res = [ 3, 9, 27, 81, 243, 729, 2187, 6561, 19683, 59049 ];
 var maxInterval = 4;
 var width = res[maxInterval-1];  //  L4 needs 55 pixels
 var scale = 5;
+
+// the layers repeat and some layers are not needed
 var neededPlanes = [0,3,9,12,27,30,36,39]
 
 canvas1 = document.createElement("canvas");
@@ -47,10 +52,10 @@ function pokeHoles(x1,y1,x2,y2,interval){
     }
 }
 
-// use the Sierpinski carpet to generate the 3D planes of a Menger sponge
+// use the 2D Sierpinski carpet to generate the 3D layers of a Menger sponge
+// only calculating the necessary layers
 function calculateSpongePlanes(){
     for (let zindex = 0; zindex < neededPlanes.length; zindex++) {
-    // for (let z = 0; z < width; z++) {
         let currentCanvas = document.createElement("canvas");
         currentCanvas.width = currentCanvas.height = width*scale;
         currentCanvas.id = "canvas"+neededPlanes[zindex];
@@ -62,9 +67,7 @@ function calculateSpongePlanes(){
         currentCtx.globalAlpha = 0.0;
         currentCtx.fillRect( 0, 0, width*scale, width*scale );
 
-
         currentCtx.globalAlpha = 1.0;
-
 
         for (let x = 0; x < width; x++) 
         for (let y = 0; y < width; y++) {
