@@ -46,6 +46,17 @@ window.addEventListener('DOMContentLoaded', function(){
         buildMats(scene);
         buildSpongePlanes(scene, meshes, multimat);
 
+        function Init3DimensionalArray(xmax, ymax, zmax, def) {
+            var r, x, y, z;
+            for (r = [], x = 0; x < xmax; x++)
+                for (r [x] = [], y = 0; y < ymax; y++)
+                     for (r [x][y] = [], z = 0; z < zmax; z++)
+                          r [x][y][z] = def; 
+            return r;
+        } 
+        var my3DimArray = Init3DimensionalArray(5, 5, 5, true);
+        console.log(my3DimArray)
+
         var convertToFlat = function () {
             for (var index = 0; index < scene.textures.length; index++) {
                 scene.textures[index].updateSamplingMode(BABYLON.Texture.NEAREST_LINEAR);
@@ -66,8 +77,8 @@ window.addEventListener('DOMContentLoaded', function(){
     // run the render loop
     engine.runRenderLoop(function(){
         scene.render();
-        console.log("indices:", scene.getActiveIndices())
-        console.log("meshes:", scene.getActiveMeshes())
+        // console.log("indices:", scene.getActiveIndices())
+        // console.log("meshes:", scene.getActiveMeshes())
     });
 
     // the canvas/window resize event handler

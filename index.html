@@ -6,6 +6,17 @@
         <script src="babylon.js"></script>
     </head>
     <body>
+        <div class="textcontainer">
+            <h1>Menger Sponge m4</h1>
+            <ol>
+                <li><h3>Begin with a cube.</h3></li>
+                <li><h3>Divide every face of the cube into 9 squares, like a Rubik's Cube. This will sub-divide the cube into 27 smaller cubes.</h3></li>
+                <li><h3>Remove the smaller cube in the middle of each face, and remove the smaller cube in the very center of the larger cube, leaving 20 smaller cubes. This is a level-1 Menger sponge (resembling a Void Cube).</h3></li>
+                <li><h3>Repeat steps 2 and 3 for each of the remaining smaller cubes, and continue to iterate ad infinitum.</h3></li>
+            </ol>      
+            <h2>Click on the image then use the arrows and left mouse hold to explore the sponge.</h2>          
+            <div id="webgl"></div>
+        </div>
         <canvas id="renderCanvas"></canvas>
         <script src="sponge.js"></script>
     </body>
